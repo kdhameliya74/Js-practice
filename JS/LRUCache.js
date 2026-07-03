@@ -52,6 +52,82 @@ put(4)
 Map: [3, 2, 4]   // 1 is removed (Least Recently Used)
 */
 
+class Node {
+    // prev <-- [key, value] --> next
+    constructor(key, value) {
+        this.key = key;
+        this.value = value;
+        this.next = null;
+        this.prev = null;
+    }
+}
+
+class LRUCacheAdvance {
+    constructor(capacity) {
+        this.capacity = capacity;
+        this.cache = new Map();
+        this.head = new Node(0, 0);
+        this.tail = new Node(0, 0);
+
+        // Head <------> Tail
+        this.head.next = this.tail;
+        this.tail.prev = this.head;
+    }
+
+    get(key) {
+        if (!this.cache.get(key)) return -1;
+        const node = this.cache.get(key);
+        this._deleteNode(node);
+        this._addNode(node);
+        return node.value;
+    }
+    put(key, value) {
+        if (this.cache.has(key)) {
+            const oldNode = this.cache.get(key);
+            oldNode.value = value;
+            this._remove(oldNode);
+            this._addNode(oldNode);
+        } else {
+            const newNode = new Node(key, value);
+            this.cache.set(key, newNode);
+            this._addNode(newNode);
+            if (this.cache.size > this.capacity) {
+                const lru = this._removeTail();
+                this.cache.delete(lru.key);
+            }
+        }
+    }
+    _addNode(node) {
+        node.next = this.head.next;
+        node.prev = this.head;
+        this.head.next.prev = node;
+        this.head.next = node;
+    }
+    _deleteNode(node) {
+        node.next.prev = node.prev
+        node.prev.next = node.next
+    }
+    _removeTail() {
+        const res = this.tail.prev;
+        this._deleteNode(res);
+        return res;
+    }
+}
+
+const lru = new LRUCacheAdvance(3);
+lru.put(1, 1);
+lru.put(2, 22);
+lru.put(3, 32);
+
+console.log(lru.get(2));
+console.log(lru.get(1));
+
+lru.put(4, 42);
+lru.put(5, 52);
+
+console.log(lru);
+
+console.log("------------------------------------")
 class LRUCache {
     constructor(capacity) {
         this.capacity = capacity;
