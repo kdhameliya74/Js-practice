@@ -30,5 +30,5 @@ function findMissing1(arr) {
     return expectedSum - actualSum;
 }
 
-console.log(findMissing([1, 2, 3, 5])); // 4
-console.log(findMissing([5, 6, 7, 9])); // 8
+console.log(findMissing1([1, 2, 3, 5])); // 4
+console.log(findMissing1([5, 6, 7, 9])); // 8
